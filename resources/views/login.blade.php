@@ -50,10 +50,13 @@
                         Ingresar
                     </button>
                 </div>
+
+                <div class="mt-4 text-center">
+                    <a href="{{ route('password.request') }}" class="text-sm text-indigo-600 hover:text-indigo-800 underline">¿Olvidaste tu contraseña?</a>
+                </div>
             </form>
         </div>
     </div>
 
 </body>
 </html>
-

@@ -5,10 +5,14 @@ namespace App\AutenticacionYSeguridad\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
+use Illuminate\Auth\Passwords\CanResetPassword;
+use App\AutenticacionYSeguridad\Notifications\ResetPasswordNotification;
+use App\AutenticacionYSeguridad\Models\Rol;
 
-class Usuario extends Authenticatable
+class Usuario extends Authenticatable implements CanResetPasswordContract
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, CanResetPassword;
 
     protected $table = 'usuario';
     protected $primaryKey = 'id_usuario';
@@ -30,5 +34,19 @@ class Usuario extends Authenticatable
     protected $hidden = [
         'contrasena',
     ];
-}
 
+    public function getEmailForPasswordReset()
+    {
+        return $this->correo;
+    }
+
+    public function sendPasswordResetNotification($token): void
+    {
+        $this->notify(new ResetPasswordNotification($token));
+    }
+
+    public function rol()
+    {
+        return $this->belongsTo(Rol::class, 'id_rol', 'id_rol');
+    }
+}

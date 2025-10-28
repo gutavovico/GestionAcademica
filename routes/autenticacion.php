@@ -3,19 +3,39 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\AutenticacionYSeguridad\Controllers\AuthController;
+use App\AutenticacionYSeguridad\Controllers\PasswordResetController;
+use App\AutenticacionYSeguridad\Controllers\UsuarioAdminController;
+use App\AutenticacionYSeguridad\Controllers\RolAdminController;
 
-// Ruta para mostrar el formulario de login (accesible a invitados)
+// Login/logout
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
-
-// Ruta para procesar el inicio de sesión (accesible a invitados)
 Route::post('/login', [AuthController::class, 'login']);
-
-// Ruta para cerrar la sesión (accesible solo a usuarios autenticados)
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth')->name('logout');
 
-// Ruta protegida de Dashboard (vista Blade)
+// Dashboard protegido (vista según rol)
 Route::get('/dashboard', function () {
     $user = Auth::user();
-    return view('dashboard', compact('user'));
+    $view = strtolower((string) optional($user->rol)->nombre) === 'administrador' ? 'dashboard_admin' : 'dashboard_docente';
+    return view($view, compact('user'));
 })->middleware('auth')->name('dashboard');
 
+// Password reset (broker de Laravel)
+Route::get('/forgot-password', [PasswordResetController::class, 'showLinkRequestForm'])->middleware('guest')->name('password.request');
+Route::post('/forgot-password', [PasswordResetController::class, 'sendResetLinkEmail'])->middleware('guest')->name('password.email');
+Route::get('/reset-password/{token}', [PasswordResetController::class, 'showResetForm'])->middleware('guest')->name('password.reset');
+Route::post('/reset-password', [PasswordResetController::class, 'reset'])->middleware('guest')->name('password.update');
+
+// Administración de usuarios y roles (solo Administrador)
+Route::middleware(['auth', 'role:Administrador'])->prefix('admin')->group(function () {
+    // Usuarios
+    Route::get('/usuarios', [UsuarioAdminController::class, 'index'])->name('admin.usuarios.index');
+    Route::post('/usuarios', [UsuarioAdminController::class, 'store'])->name('admin.usuarios.store');
+    Route::post('/usuarios/{id}', [UsuarioAdminController::class, 'update'])->name('admin.usuarios.update');
+    Route::post('/usuarios/{id}/toggle', [UsuarioAdminController::class, 'toggleEstado'])->name('admin.usuarios.toggle');
+
+    // Roles
+    Route::get('/roles', [RolAdminController::class, 'index'])->name('admin.roles.index');
+    Route::post('/roles', [RolAdminController::class, 'store'])->name('admin.roles.store');
+    Route::post('/roles/{id}', [RolAdminController::class, 'update'])->name('admin.roles.update');
+    Route::post('/roles/{id}/delete', [RolAdminController::class, 'destroy'])->name('admin.roles.destroy');
+});
