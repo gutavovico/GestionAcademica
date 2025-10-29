@@ -22,12 +22,10 @@
         <div class="text-lg font-semibold mb-2">Gestionar roles</div>
         <div class="text-gray-600">Crear y editar roles del sistema.</div>
       </a>
-      <a href="/test" class="block bg-white p-6 rounded shadow hover:shadow-md">
-        <div class="text-lg font-semibold mb-2">Página de prueba</div>
-        <div class="text-gray-600">Ver estado de sesión.</div>
-      </a>
+      <a href="/admin/bitacora" class="block bg-white p-6 rounded shadow hover:shadow-md"><div class="text-lg font-semibold mb-2">Bit�cora del sistema</div><div class="text-gray-600">Consulta de acciones y trazabilidad.</div></a>
     </div>
   </div>
 </body>
 </html>
+
 

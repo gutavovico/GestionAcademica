@@ -9,6 +9,7 @@ use App\AutenticacionYSeguridad\Controllers\RolAdminController;
 use App\GestionAcademica\Controllers\MateriaController;
 use App\GestionAcademica\Controllers\GrupoController;
 use App\GestionAcademica\Controllers\CargaHorariaController;
+use App\Administracion\Controllers\BitacoraController;
 
 // Login/logout
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -53,5 +54,7 @@ Route::middleware(['auth', 'role:Administrador'])->prefix('admin')->group(functi
     // Carga Horaria
     Route::get('/cargas', [CargaHorariaController::class, 'index'])->name('admin.cargas.index');
     Route::post('/cargas', [CargaHorariaController::class, 'store'])->name('admin.cargas.store');
-});
 
+    // Bitácora
+    Route::get('/bitacora', [BitacoraController::class, 'index'])->name('admin.bitacora.index');
+});
