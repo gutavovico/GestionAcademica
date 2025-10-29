@@ -6,6 +6,9 @@ use App\AutenticacionYSeguridad\Controllers\AuthController;
 use App\AutenticacionYSeguridad\Controllers\PasswordResetController;
 use App\AutenticacionYSeguridad\Controllers\UsuarioAdminController;
 use App\AutenticacionYSeguridad\Controllers\RolAdminController;
+use App\GestionAcademica\Controllers\MateriaController;
+use App\GestionAcademica\Controllers\GrupoController;
+use App\GestionAcademica\Controllers\CargaHorariaController;
 
 // Login/logout
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -25,7 +28,7 @@ Route::post('/forgot-password', [PasswordResetController::class, 'sendResetLinkE
 Route::get('/reset-password/{token}', [PasswordResetController::class, 'showResetForm'])->middleware('guest')->name('password.reset');
 Route::post('/reset-password', [PasswordResetController::class, 'reset'])->middleware('guest')->name('password.update');
 
-// Administración de usuarios y roles (solo Administrador)
+// Administración (solo Administrador)
 Route::middleware(['auth', 'role:Administrador'])->prefix('admin')->group(function () {
     // Usuarios
     Route::get('/usuarios', [UsuarioAdminController::class, 'index'])->name('admin.usuarios.index');
@@ -38,4 +41,17 @@ Route::middleware(['auth', 'role:Administrador'])->prefix('admin')->group(functi
     Route::post('/roles', [RolAdminController::class, 'store'])->name('admin.roles.store');
     Route::post('/roles/{id}', [RolAdminController::class, 'update'])->name('admin.roles.update');
     Route::post('/roles/{id}/delete', [RolAdminController::class, 'destroy'])->name('admin.roles.destroy');
+
+    // Materias
+    Route::get('/materias', [MateriaController::class, 'index'])->name('admin.materias.index');
+    Route::post('/materias', [MateriaController::class, 'store'])->name('admin.materias.store');
+
+    // Grupos
+    Route::get('/grupos', [GrupoController::class, 'index'])->name('admin.grupos.index');
+    Route::post('/grupos', [GrupoController::class, 'store'])->name('admin.grupos.store');
+
+    // Carga Horaria
+    Route::get('/cargas', [CargaHorariaController::class, 'index'])->name('admin.cargas.index');
+    Route::post('/cargas', [CargaHorariaController::class, 'store'])->name('admin.cargas.store');
 });
+
