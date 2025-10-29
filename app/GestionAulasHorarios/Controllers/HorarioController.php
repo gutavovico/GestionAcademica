@@ -76,5 +76,19 @@ class HorarioController extends Controller
         $r = $this->service->marcarAsignado($id);
         return response()->json($r, isset($r['error']) ? 404 : 200);
     }
-}
 
+    // GET /api/horarios/docentes
+    public function docentes()
+    {
+        return response()->json($this->service->listarDocentes(), 200);
+    }
+
+    // GET /api/horarios/cargas?id_usuario=
+    public function cargas(Request $request)
+    {
+        $v = Validator::make($request->all(), [ 'id_usuario' => 'required|integer' ]);
+        if ($v->fails()) return response()->json(['error' => $v->errors()->first()], 422);
+        $d = $v->validated();
+        return response()->json($this->service->cargasPorDocente((int)$d['id_usuario']), 200);
+    }
+}

@@ -12,10 +12,13 @@ class HorarioService
         $q = DB::table('horario as h')
             ->leftJoin('aula as a', 'a.id_aula', '=', 'h.id_aula')
             ->leftJoin('carga_horaria as ch', 'ch.id_carga', '=', 'h.id_carga')
+            ->leftJoin('materia as m', 'm.id_materia', '=', 'ch.id_materia')
             ->select(
                 'h.*',
                 'a.nroaula', 'a.tipo_aula', 'a.capacidad', 'a.id_modulo',
-                'ch.id_usuario', 'ch.id_materia', 'ch.id_grupo', 'ch.horas_semanales', 'ch.gestion'
+                'ch.id_usuario', 'ch.id_materia', 'ch.id_grupo', 'ch.horas_semanales', 'ch.gestion',
+                DB::raw('COALESCE(m.nombre, \'\') as materia_nombre'),
+                DB::raw('COALESCE(m.sigla, \'\') as materia_sigla')
             )
             ->orderBy('h.dia')
             ->orderBy('h.hora_ini');
@@ -114,5 +117,45 @@ class HorarioService
         DB::table('horario')->where('id_horario', $id)->update(['estado' => 'Activo']);
         return $this->obtener($id);
     }
-}
 
+    // Auxiliares para UI
+    public function listarDocentes(): array
+    {
+        // Agrega materias (siglas) que imparte el docente usando string_agg de PostgreSQL
+        $rows = DB::table('usuario as u')
+            ->leftJoin('roles as r', 'r.id_rol', '=', 'u.id_rol')
+            ->leftJoin('carga_horaria as ch', 'ch.id_usuario', '=', 'u.id_usuario')
+            ->leftJoin('materia as m', 'm.id_materia', '=', 'ch.id_materia')
+            // Mostrar todos los usuarios con rol de Docente o con alguna carga, sin filtrar por estado
+            // Considerar usuarios con rol 'Docente' o con al menos una carga_horaria
+            ->where(function ($q) {
+                $q->whereRaw("LOWER(COALESCE(r.nombre,'')) LIKE '%docent%'")
+                  ->orWhereExists(function ($qq) {
+                      $qq->select(DB::raw(1))
+                         ->from('carga_horaria as ch2')
+                         ->whereColumn('ch2.id_usuario', 'u.id_usuario');
+                  });
+            })
+            ->groupBy('u.id_usuario', 'u.nombre')
+            ->orderBy('u.nombre')
+            ->select(
+                'u.id_usuario',
+                'u.nombre',
+                DB::raw("COALESCE(string_agg(DISTINCT m.sigla, ' / '), '') as materias")
+            )
+            ->get()->toArray();
+        return ['docentes' => $rows];
+    }
+
+    public function cargasPorDocente(int $idUsuario): array
+    {
+        $rows = DB::table('carga_horaria as ch')
+            ->leftJoin('materia as m', 'm.id_materia', '=', 'ch.id_materia')
+            ->leftJoin('grupo as g', 'g.id_grupo', '=', 'ch.id_grupo')
+            ->where('ch.id_usuario', $idUsuario)
+            ->select('ch.id_carga', 'ch.gestion', 'm.id_materia', 'm.sigla', 'm.nombre as materia', 'g.nombre as grupo')
+            ->orderByDesc('ch.gestion')
+            ->get()->toArray();
+        return ['cargas' => $rows];
+    }
+}

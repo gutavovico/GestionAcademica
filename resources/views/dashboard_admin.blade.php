@@ -68,11 +68,11 @@
               <span>></span>
             </summary>
             <div class="pl-4 py-2 space-y-1">
-              <span class="block text-slate-400">Registrar aulas y capacidad (proximamente)</span>
-              <span class="block text-slate-400">Registrar aulas y grupos (proximamente)</span>
+              <a href="/gestion-aulas/registrar" class="block hover:underline">Registrar aulas y capacidad</a>
+              <a href="/gestion-aulas/registrar-aula-horario" class="block hover:underline">Registrar aulas a horarios</a>
               <span class="block text-slate-400">Asignacion automatica de horarios (proximamente)</span>
               <span class="block text-slate-400">Consultar aulas disponibles (proximamente)</span>
-              <span class="block text-slate-400">Gestionar horario del docente (proximamente)</span>
+              <a href="/gestion-aulas/horarios" class="block hover:underline">Gestionar horario del docente</a>
             </div>
           </details>
 
@@ -156,6 +156,4 @@
   </main>
 </body>
 </html>
-
-
 

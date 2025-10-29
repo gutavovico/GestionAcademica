@@ -7,6 +7,11 @@ use Illuminate\Support\Facades\DB;
 
 class AsignacionAulaService
 {
+    public function listarModulos(): array
+    {
+        $mods = DB::table('modulo')->select('id_modulo','facultad')->orderBy('id_modulo')->get()->toArray();
+        return ['modulos' => $mods];
+    }
     /**
      * Lista aulas activas/disponibles con filtros simples.
      */

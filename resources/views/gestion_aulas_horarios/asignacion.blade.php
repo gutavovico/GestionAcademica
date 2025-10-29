@@ -16,6 +16,7 @@
         .actions { display: flex; gap: .5rem; align-items: center; }
         button { padding: .55rem 1rem; border-radius: .375rem; border: 1px solid #0ea5e9; background: #0ea5e9; color: white; cursor: pointer; }
         button.secondary { border-color: #cbd5e1; background: transparent; color: inherit; }
+        a.button { padding: .55rem 1rem; border-radius: .375rem; border: 1px solid #cbd5e1; background: transparent; color: inherit; text-decoration: none; display:inline-block; }
         table { border-collapse: collapse; width: 100%; margin-top: 1rem; }
         th, td { border: 1px solid #e2e8f0; padding: .5rem .6rem; text-align: left; }
         th { background: #f1f5f9; }
@@ -31,6 +32,9 @@
     </style>
     </head>
 <body>
+    <div class="actions" style="margin-top:0;">
+        <a href="/dashboard" class="button">← Volver al perfil</a>
+    </div>
     <h1>Asignación de Aula a Grupo</h1>
     <p class="hint">Selecciona un aula y un día; verás los horarios de 90 minutos disponibles entre 07:00 y 22:30 (se omiten reservas Activas). Luego asigna el horario a una carga horaria.</p>
 

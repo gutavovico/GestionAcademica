@@ -35,6 +35,14 @@ class AsignacionAulaController extends Controller
     }
 
     /**
+     * GET /api/asignacion/modulos
+     */
+    public function modulos()
+    {
+        return response()->json($this->service->listarModulos(), 200);
+    }
+
+    /**
      * GET /api/asignacion/slots?dia=&id_aula=
      */
     public function slots(Request $request)
