@@ -1,4 +1,4 @@
-<?php
+ï»¿<?php
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -16,11 +16,33 @@ Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth')->name('logout');
 
-// Dashboard protegido (vista según rol)
+// Dashboard protegido (vista segun rol)
 Route::get('/dashboard', function () {
     $user = Auth::user();
-    $view = strtolower((string) optional($user->rol)->nombre) === 'administrador' ? 'dashboard_admin' : 'dashboard_docente';
-    return view($view, compact('user'));
+    $role = strtolower((string) optional($user->rol)->nombre);
+
+    if ($role === 'administrador') {
+        $activos = function ($q) { $q->where('estado', true)->orWhereNull('estado'); };
+        $usuariosCount = App\AutenticacionYSeguridad\Models\Usuario::where($activos)->count();
+        $docentesCount = App\AutenticacionYSeguridad\Models\Usuario::whereHas('rol', function ($q) {
+            $q->where('nombre', 'Docente');
+        })->where($activos)->count();
+        $administrativosCount = App\AutenticacionYSeguridad\Models\Usuario::whereHas('rol', function ($q) {
+            $q->whereIn('nombre', ['Administrador', 'Coordinador', 'Autoridad']);
+        })->where($activos)->count();
+        return view('dashboard_admin', compact('user','usuariosCount','docentesCount','administrativosCount'));
+    }
+
+    if ($role === 'autoridad') {
+        return view('dashboard_autoridad', compact('user'));
+    }
+
+    // Coordinador y demas roles (por defecto Docente):
+    $cargas = App\GestionAcademica\Models\CargaHoraria::with(['materia','grupo'])
+        ->where('id_usuario', $user->id_usuario)
+        ->orderByDesc('gestion')
+        ->get();
+    if ($role === 'coordinador') { return view('dashboard_coordinador', compact('user')); } return view('dashboard_docente', compact('user','cargas'));
 })->middleware('auth')->name('dashboard');
 
 // Password reset (broker de Laravel)
@@ -29,7 +51,7 @@ Route::post('/forgot-password', [PasswordResetController::class, 'sendResetLinkE
 Route::get('/reset-password/{token}', [PasswordResetController::class, 'showResetForm'])->middleware('guest')->name('password.reset');
 Route::post('/reset-password', [PasswordResetController::class, 'reset'])->middleware('guest')->name('password.update');
 
-// Administración (solo Administrador)
+// Administracion (solo Administrador)
 Route::middleware(['auth', 'role:Administrador'])->prefix('admin')->group(function () {
     // Usuarios
     Route::get('/usuarios', [UsuarioAdminController::class, 'index'])->name('admin.usuarios.index');
@@ -55,6 +77,13 @@ Route::middleware(['auth', 'role:Administrador'])->prefix('admin')->group(functi
     Route::get('/cargas', [CargaHorariaController::class, 'index'])->name('admin.cargas.index');
     Route::post('/cargas', [CargaHorariaController::class, 'store'])->name('admin.cargas.store');
 
-    // Bitácora
+    // Bitacora
     Route::get('/bitacora', [BitacoraController::class, 'index'])->name('admin.bitacora.index');
 });
+
+// Decano: consultar bitacora (lectura)
+Route::get('/autoridad/bitacora', [BitacoraController::class, 'index'])
+    ->middleware(['auth','role:Autoridad,Administrador'])
+    ->name('autoridad.bitacora.index');
+
+

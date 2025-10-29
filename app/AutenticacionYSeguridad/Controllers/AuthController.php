@@ -8,6 +8,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
+
 class AuthController extends Controller
 {
     protected AuthService $authService;
@@ -18,7 +19,7 @@ class AuthController extends Controller
     }
 
     /**
-     * Muestra el formulario de inicio de sesión.
+     * Muestra el formulario de inicio de sesi?n.
      */
     public function showLoginForm()
     {
@@ -26,7 +27,7 @@ class AuthController extends Controller
     }
 
     /**
-     * Maneja el intento de inicio de sesión.
+     * Maneja el intento de inicio de sesi?n.
      */
     public function login(LoginRequest $request): RedirectResponse
     {
@@ -47,7 +48,7 @@ class AuthController extends Controller
     }
 
     /**
-     * Cierra la sesión del usuario.
+     * Cierra la sesi?n del usuario.
      */
     public function logout(Request $request): RedirectResponse
     {
@@ -57,7 +58,6 @@ class AuthController extends Controller
         $request->session()->regenerateToken();
 
         return redirect()->route('login')
-                ->with('info', 'Sesión cerrada correctamente.');
+                ->with('info', 'Sesi?n cerrada correctamente.');
     }
 }
-
