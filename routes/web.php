@@ -1,13 +1,17 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
 // Carga todas las rutas definidas en el archivo de autenticaci�n
 require __DIR__.'/autenticacion.php';
 
 // Define la ruta ra�z (opcional)
 Route::get('/', function () {
-    return view('welcome');
+    if (Auth::check()) {
+        return redirect()->route('dashboard');
+    }
+    return redirect()->route('login');
 });
 //HEAD
 Route::get('/gestion-aulas/test', function () {
