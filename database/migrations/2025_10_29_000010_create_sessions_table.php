@@ -8,6 +8,11 @@ return new class extends Migration
 {
     public function up(): void
     {
+        // Evita fallo cuando la tabla ya existe en el entorno (e.g., creada previamente)
+        if (Schema::hasTable('sessions')) {
+            return;
+        }
+
         Schema::create('sessions', function (Blueprint $table) {
             $table->string('id')->primary();
             $table->foreignId('user_id')->nullable();
@@ -26,4 +31,3 @@ return new class extends Migration
         Schema::dropIfExists('sessions');
     }
 };
-
