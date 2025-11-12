@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\GestionAulasHorarios\Services\HorarioService;
+use App\Support\BitacoraLogger;
 
 class HorarioController extends Controller
 {
@@ -47,6 +48,9 @@ class HorarioController extends Controller
             return response()->json(['error' => 'hora_ini debe ser menor que hora_fin'], 422);
         }
         $r = $this->service->crear($d);
+        if (!isset($r['error'])) {
+            BitacoraLogger::log('Crear horario', 'Día '.$d['dia'].' '.$d['hora_ini'].'-'.$d['hora_fin'].' (aula '.$d['id_aula'].')');
+        }
         return response()->json($r, isset($r['error']) ? ($r['error']==='Conflicto con otra reserva'?409:404) : 201);
     }
 
@@ -67,6 +71,9 @@ class HorarioController extends Controller
             return response()->json(['error' => 'hora_ini debe ser menor que hora_fin'], 422);
         }
         $r = $this->service->actualizar($id, $d);
+        if (!isset($r['error'])) {
+            BitacoraLogger::log('Actualizar horario', 'ID '.$id);
+        }
         return response()->json($r, isset($r['error']) ? ($r['error']==='Conflicto con otra reserva'?409:404) : 200);
     }
 
@@ -74,6 +81,9 @@ class HorarioController extends Controller
     public function destroy(int $id)
     {
         $r = $this->service->marcarAsignado($id);
+        if (!isset($r['error'])) {
+            BitacoraLogger::log('Eliminar horario', 'ID '.$id.' (baja lógica)');
+        }
         return response()->json($r, isset($r['error']) ? 404 : 200);
     }
 

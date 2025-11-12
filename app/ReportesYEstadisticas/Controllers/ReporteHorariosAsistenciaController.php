@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\ReportesYEstadisticas\Services\ReporteHorariosAsistenciaService;
+use App\Support\BitacoraLogger;
 
 class ReporteHorariosAsistenciaController extends Controller
 {
@@ -13,6 +14,7 @@ class ReporteHorariosAsistenciaController extends Controller
 
     public function vista()
     {
+        BitacoraLogger::log('Ver reporte H/A (vista)', null);
         return view('reportes.horarios_asistencia');
     }
 
@@ -33,8 +35,8 @@ class ReporteHorariosAsistenciaController extends Controller
         ]);
         if ($v->fails()) return response()->json(['error' => $v->errors()->first()], 422);
         $d = $v->validated();
+        BitacoraLogger::log('Generar reporte H/A', json_encode($d));
         $res = $this->service->data($d['desde'], $d['hasta'], $d['id_usuario'] ?? null, $d['id_materia'] ?? null, $d['id_grupo'] ?? null, $d['gestion'] ?? null);
         return response()->json($res, 200);
     }
 }
-

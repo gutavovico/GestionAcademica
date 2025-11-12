@@ -10,6 +10,7 @@ use App\GestionAcademica\Requests\CargaHorariaStoreRequest;
 use App\GestionAcademica\Services\CargaHorariaService;
 use Illuminate\Http\RedirectResponse;
 use App\Http\Controllers\Controller;
+use App\Support\BitacoraLogger;
 
 class CargaHorariaController extends Controller
 {
@@ -28,6 +29,7 @@ class CargaHorariaController extends Controller
     {
         $data = $request->validated();
         $this->service->assign($data);
+        BitacoraLogger::log('Asignar carga horaria', json_encode($data));
         return back()->with('success', 'Carga horaria asignada');
     }
 

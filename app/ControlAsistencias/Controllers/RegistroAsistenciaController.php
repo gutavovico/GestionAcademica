@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use App\ControlAsistencias\Services\RegistroAsistenciaService;
+use App\Support\BitacoraLogger;
 
 class RegistroAsistenciaController extends Controller
 {
@@ -43,6 +44,10 @@ class RegistroAsistenciaController extends Controller
         $user = Auth::user();
         $res = $this->service->registrarParaDocente((int)$user->id_usuario, (int)$d['id_horario'], $d['metodo'] ?? 'Manual', $d['tipo'] ?? null, $d['observacion'] ?? null);
         $code = isset($res['error']) ? 400 : 201;
+        if ($code === 201) {
+            $tipo = $d['tipo'] ?? ($res['asistencia']->tipo ?? '');
+            BitacoraLogger::log('Registro de asistencia', 'Docente registró: '.$tipo.' (horario '.$d['id_horario'].')');
+        }
         return response()->json($res, $code);
     }
 
@@ -58,6 +63,9 @@ class RegistroAsistenciaController extends Controller
         $d = $v->validated();
         $res = $this->service->registrarComoAdmin((int)$d['id_horario'], $d['tipo'], $d['metodo'] ?? 'Manual', $d['observacion'] ?? null);
         $code = isset($res['error']) ? 400 : 201;
+        if ($code === 201) {
+            BitacoraLogger::log('Registro de asistencia (admin)', 'Se marcó '.$d['tipo'].' (horario '.$d['id_horario'].')');
+        }
         return response()->json($res, $code);
     }
 

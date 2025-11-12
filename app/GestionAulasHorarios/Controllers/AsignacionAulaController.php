@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\GestionAulasHorarios\Services\AsignacionAulaService;
+use App\Support\BitacoraLogger;
+use App\Support\BitacoraLogger;
 
 class AsignacionAulaController extends Controller
 {
@@ -31,6 +33,7 @@ class AsignacionAulaController extends Controller
         }
         $d = $v->validated();
         $res = $this->service->listarAulas($d['capacidad'] ?? null, $d['id_modulo'] ?? null, $d['tipo_aula'] ?? null);
+        BitacoraLogger::log('Listar aulas', json_encode($d));
         return response()->json($res, 200);
     }
 
@@ -91,7 +94,7 @@ class AsignacionAulaController extends Controller
             $data['id_modulo'] ?? null,
             $data['tipo_aula'] ?? null,
         );
-
+        BitacoraLogger::log('Consultar aulas disponibles', json_encode($data));
         return response()->json($res, 200);
     }
 
@@ -135,6 +138,9 @@ class AsignacionAulaController extends Controller
             return response()->json($res, $code);
         }
 
+        if (!isset($res['error'])) {
+            BitacoraLogger::log('Asignar aula', 'Día '.$data['dia'].' '.$data['hora_ini'].'-'.$data['hora_fin'].' (aula '.($data['id_aula'] ?? ($data['nroaula'].'/M'.$data['id_modulo'])).')');
+        }
         return response()->json($res, 201);
     }
 }

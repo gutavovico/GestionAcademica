@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\ReportesYEstadisticas\Services\ReportesEstadisticosService;
+use App\Support\BitacoraLogger;
 
 class ReportesGlobalesController extends Controller
 {
@@ -18,6 +19,7 @@ class ReportesGlobalesController extends Controller
 
     public function vista()
     {
+        BitacoraLogger::log('Ver reporte global (vista)', null);
         return view('administracion.reportes_globales');
     }
 
@@ -36,8 +38,8 @@ class ReportesGlobalesController extends Controller
             return response()->json(['error' => $v->errors()->first()], 422);
         }
         $d = $v->validated();
+        BitacoraLogger::log('Generar reporte global', json_encode($d));
         $res = $this->service->data($d['gestion'] ?? null, isset($d['id_modulo']) ? (int)$d['id_modulo'] : null);
         return response()->json($res, 200);
     }
 }
-

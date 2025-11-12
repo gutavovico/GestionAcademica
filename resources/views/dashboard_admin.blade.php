@@ -58,7 +58,7 @@
             <div class="pl-4 py-2 space-y-1">
               <a href="/admin/materias" class="block hover:underline">Registrar materias</a>
               <a href="/admin/cargas" class="block hover:underline">Asignar carga horaria al docente</a>
-              <span class="block text-slate-400">Importar datos a Excel/CSV (proximamente)</span>
+              <a href="/admin/importar" class="block hover:underline">Importar datos masivos de Excel/CSV</a>
             </div>
           </details>
 
@@ -145,9 +145,10 @@
             <div class="font-medium text-slate-800">Asignar carga horaria</div>
             <div class="text-slate-500 text-sm">Vincular docente, materia y grupo</div>
           </a>
-          <div class="rounded-xl border border-dashed border-slate-200 p-4 text-slate-400">
-            Importar Excel/CSV (proximamente)
-          </div>
+          <a href="/admin/importar" class="block rounded-xl border border-slate-200 hover:border-slate-300 p-4">
+            <div class="font-medium text-slate-800">Importar datos masivos de Excel/CSV</div>
+            <div class="text-slate-500 text-sm">Cargar docentes, materias o grupos</div>
+          </a>
         </div>
       </div>
     </section>

@@ -11,6 +11,7 @@ use App\GestionAcademica\Controllers\GrupoController;
 use App\GestionAcademica\Controllers\CargaHorariaController;
 use App\Administracion\Controllers\BitacoraController;
 use App\Administracion\Controllers\PanelAdminController;
+use App\Administracion\Controllers\ImportacionMasivaController;
 use App\ReportesYEstadisticas\Controllers\ReportesGlobalesController;
 use App\ReportesYEstadisticas\Controllers\ReporteHorariosAsistenciaController;
 use App\ControlAsistencias\Controllers\HorarioSemanalController;
@@ -79,6 +80,10 @@ Route::middleware(['auth', 'role:Administrador'])->prefix('admin')->group(functi
 
     // Bitacora
     Route::get('/bitacora', [BitacoraController::class, 'index'])->name('admin.bitacora.index');
+
+    // Importación masiva (CSV)
+    Route::get('/importar', [ImportacionMasivaController::class, 'vista'])->name('admin.importar.vista');
+    Route::post('/importar', [ImportacionMasivaController::class, 'importar'])->name('admin.importar.cargar');
 });
 
 // Decano: consultar bitacora (lectura)

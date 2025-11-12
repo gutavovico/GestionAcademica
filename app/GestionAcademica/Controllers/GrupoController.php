@@ -8,6 +8,7 @@ use App\GestionAcademica\Requests\GrupoUpdateRequest;
 use App\GestionAcademica\Services\GrupoService;
 use Illuminate\Http\RedirectResponse;
 use App\Http\Controllers\Controller;
+use App\Support\BitacoraLogger;
 
 class GrupoController extends Controller
 {
@@ -21,7 +22,9 @@ class GrupoController extends Controller
 
     public function store(GrupoStoreRequest $request): RedirectResponse
     {
-        $this->service->create($request->validated());
+        $data = $request->validated();
+        $this->service->create($data);
+        BitacoraLogger::log('Crear grupo', ($data['nombre'] ?? ''));
         return back()->with('success', 'Grupo creado');
     }
 

@@ -11,6 +11,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Support\BitacoraLogger;
 
 class UsuarioAdminController extends Controller
 {
@@ -28,6 +29,7 @@ class UsuarioAdminController extends Controller
     public function store(UsuarioStoreRequest $request): RedirectResponse
     {
         $this->service->create($request->validated());
+        BitacoraLogger::log('Crear usuario', $request->input('correo'));
         return back()->with('success', 'Usuario creado correctamente');
     }
 
@@ -35,6 +37,7 @@ class UsuarioAdminController extends Controller
     {
         $usuario = Usuario::findOrFail($id);
         $this->service->update($usuario, $request->validated());
+        BitacoraLogger::log('Actualizar usuario', (string)$usuario->correo);
         return back()->with('success', 'Usuario actualizado correctamente');
     }
 
@@ -42,7 +45,7 @@ class UsuarioAdminController extends Controller
     {
         $usuario = Usuario::findOrFail($id);
         $this->service->toggleEstado($usuario);
+        BitacoraLogger::log('Cambiar estado usuario', (string)$usuario->correo);
         return back()->with('success', 'Estado del usuario actualizado');
     }
 }
-

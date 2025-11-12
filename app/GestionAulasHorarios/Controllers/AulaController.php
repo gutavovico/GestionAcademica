@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\GestionAulasHorarios\Services\AulaService;
+use App\Support\BitacoraLogger;
 
 class AulaController extends Controller
 {
@@ -30,7 +31,8 @@ class AulaController extends Controller
             return response()->json(['error' => $v->errors()->first()], 422);
         }
 
-        $res = $this->service->registrarAula($v->validated(), null);
+        $d = $v->validated();
+        $res = $this->service->registrarAula($d, null);
 
         if (isset($res['error'])) {
             $code = match ($res['error']) {
@@ -41,6 +43,9 @@ class AulaController extends Controller
             return response()->json($res, $code);
         }
 
+        if (!isset($res['error'])) {
+            BitacoraLogger::log('Registrar aula', 'Aula '.$d['nroaula'].' Modulo '.$d['id_modulo']);
+        }
         return response()->json($res, 201);
     }
 }

@@ -47,7 +47,7 @@
         @forelse ($registros as $r)
           <tr class="border-t">
             <td class="p-2">{{ $r->fecha }}</td>
-            <td class="p-2">{{ $r->hora }}</td>
+            <td class="p-2">{{ $r->hora_texto ?? $r->hora }}</td>
             <td class="p-2">{{ $r->usuario->nombre ?? '-' }} ({{ $r->usuario->correo ?? '' }})</td>
             <td class="p-2">{{ $r->accion }}</td>
             <td class="p-2">{{ $r->detalle }}</td>

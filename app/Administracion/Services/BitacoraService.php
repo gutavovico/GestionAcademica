@@ -11,7 +11,7 @@ class BitacoraService
     {
         $q = Bitacora::with(['usuario' => function ($q) {
             $q->select('id_usuario', 'nombre', 'correo');
-        }])->orderByDesc('fecha')->orderByDesc('hora');
+        }])->orderByDesc('id_bitacora');
 
         if (!empty($filters['id_usuario'])) {
             $q->where('id_usuario', (int) $filters['id_usuario']);
@@ -32,4 +32,3 @@ class BitacoraService
         return $q->paginate($perPage)->appends($filters);
     }
 }
-

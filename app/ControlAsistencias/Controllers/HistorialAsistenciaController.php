@@ -7,6 +7,7 @@ use App\ControlAsistencias\Services\HistorialAsistenciaService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use App\Support\BitacoraLogger;
 
 class HistorialAsistenciaController extends Controller
 {
@@ -29,7 +30,9 @@ class HistorialAsistenciaController extends Controller
         ]);
         if ($v->fails()) return response()->json(['error' => $v->errors()->first()], 422);
 
-        $data = $this->service->buscar($v->validated(), (int) $user->id_usuario);
+        $f = $v->validated();
+        $data = $this->service->buscar($f, (int) $user->id_usuario);
+        BitacoraLogger::log('Consultar historial (mi cuenta)', 'Filtros: '.json_encode($f));
         return response()->json($data, 200);
     }
 
@@ -49,6 +52,7 @@ class HistorialAsistenciaController extends Controller
         if ($v->fails()) return response()->json(['error' => $v->errors()->first()], 422);
         $d = $v->validated();
         $data = $this->service->buscar($d, (int) $d['id_usuario']);
+        BitacoraLogger::log('Consultar historial (coordinador)', 'Docente '.$d['id_usuario'].' Filtros: '.json_encode($d));
         return response()->json($data, 200);
     }
 }

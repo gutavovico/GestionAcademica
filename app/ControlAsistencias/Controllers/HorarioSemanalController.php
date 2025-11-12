@@ -5,6 +5,7 @@ namespace App\ControlAsistencias\Controllers;
 use App\Http\Controllers\Controller;
 use App\ControlAsistencias\Services\VerHorarioSemanalService;
 use Illuminate\Support\Facades\Auth;
+use App\Support\BitacoraLogger;
 
 class HorarioSemanalController extends Controller
 {
@@ -28,7 +29,7 @@ class HorarioSemanalController extends Controller
             return response()->json(['error' => 'No autenticado'], 401);
         }
         $data = $this->service->paraDocente((int) $user->id_usuario);
+        BitacoraLogger::log('Consultar horario semanal', 'Usuario '.$user->id_usuario);
         return response()->json($data, 200);
     }
 }
-

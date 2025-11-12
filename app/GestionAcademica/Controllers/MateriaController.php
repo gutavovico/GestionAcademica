@@ -8,6 +8,7 @@ use App\GestionAcademica\Requests\MateriaUpdateRequest;
 use App\GestionAcademica\Services\MateriaService;
 use Illuminate\Http\RedirectResponse;
 use App\Http\Controllers\Controller;
+use App\Support\BitacoraLogger;
 
 class MateriaController extends Controller
 {
@@ -21,7 +22,9 @@ class MateriaController extends Controller
 
     public function store(MateriaStoreRequest $request): RedirectResponse
     {
-        $this->service->create($request->validated());
+        $data = $request->validated();
+        $this->service->create($data);
+        BitacoraLogger::log('Crear materia', ($data['sigla'] ?? '').' - '.($data['nombre'] ?? ''));
         return back()->with('success', 'Materia creada');
     }
 

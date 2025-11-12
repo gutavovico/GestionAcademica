@@ -7,6 +7,7 @@ use App\AutenticacionYSeguridad\Services\AuthService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Support\BitacoraLogger;
 
 
 class AuthController extends Controller
@@ -37,7 +38,7 @@ class AuthController extends Controller
 
         if ($this->authService->attemptLogin($correo, $contrasena)) {
             $request->session()->regenerate();
-
+            BitacoraLogger::log('Login', $correo);
             return redirect()->intended('/dashboard')
                              ->with('success', 'Bienvenido de nuevo!');
         }
@@ -52,6 +53,7 @@ class AuthController extends Controller
      */
     public function logout(Request $request): RedirectResponse
     {
+        BitacoraLogger::log('Logout', optional($request->user())->correo);
         $this->authService->logout();
 
         $request->session()->invalidate();
