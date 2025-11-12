@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Registrar Aula a Horario</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="min-h-screen bg-[#eef5ff]">
   <header class="max-w-6xl mx-auto px-6 py-6 flex items-center justify-between">
@@ -184,4 +184,3 @@
   </script>
 </body>
 </html>
-

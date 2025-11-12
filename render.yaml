@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: gestion-academica
+    env: native
+    runtime: php
+    buildCommand: >
+      if [ -f package.json ]; then corepack enable && npm install && npm run build; fi &&
+      composer install --no-dev --prefer-dist --optimize-autoloader &&
+      (php artisan storage:link || true) &&
+      php artisan config:cache && php artisan route:cache && php artisan view:cache &&
+      php artisan migrate --force
+    startCommand: php artisan serve --host 0.0.0.0 --port $PORT
+    autoDeploy: true

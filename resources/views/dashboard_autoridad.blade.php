@@ -47,10 +47,11 @@
         <div class="bg-white rounded-2xl shadow p-6">
           <h2 class="font-semibold text-slate-900 mb-3">Administracion</h2>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <div class="rounded-xl border border-dashed border-slate-200 p-4 text-slate-500">
-              Generar reportes estadisticos globales (proximamente)
-            </div>
-            <a href="/decano/bitacora" class="block rounded-xl border border-slate-200 hover:border-slate-300 p-4">
+            <a href="/reportes/globales" class="block rounded-xl border border-slate-200 hover:border-slate-300 p-4">
+              <div class="font-medium text-slate-800">Reportes estadisticos globales</div>
+              <div class="text-slate-500 text-sm">Uso de aulas, carga y asistencia</div>
+            </a>
+            <a href="/autoridad/bitacora" class="block rounded-xl border border-slate-200 hover:border-slate-300 p-4">
               <div class="font-medium text-slate-800">Consultar bitacora</div>
               <div class="text-slate-500 text-sm">Registro de acciones del sistema</div>
             </a>
@@ -60,8 +61,9 @@
 
       <section id="sec-horarios" class="hidden space-y-4">
         <div class="bg-white rounded-2xl shadow p-6">
-          <h2 class="font-semibold text-slate-900 mb-3">Gestion de Horarios</h2>
-          <p class="text-slate-600">Seccion en construccion.</p>
+          <h2 class="font-semibold text-slate-900 mb-3">Gestión de Horarios</h2>
+          <p class="text-slate-600 mb-3">Consulta y revisa los horarios de los docentes.</p>
+          <a href="/gestion-aulas/horarios" class="inline-flex items-center bg-neutral-900 hover:bg-black text-white rounded-lg px-4 py-2">Abrir gestor de horarios</a>
         </div>
       </section>
     </main>
@@ -96,4 +98,3 @@
   </script>
 </body>
 </html>
-

@@ -10,6 +10,12 @@ use App\GestionAcademica\Controllers\MateriaController;
 use App\GestionAcademica\Controllers\GrupoController;
 use App\GestionAcademica\Controllers\CargaHorariaController;
 use App\Administracion\Controllers\BitacoraController;
+use App\Administracion\Controllers\PanelAdminController;
+use App\ReportesYEstadisticas\Controllers\ReportesGlobalesController;
+use App\ReportesYEstadisticas\Controllers\ReporteHorariosAsistenciaController;
+use App\ControlAsistencias\Controllers\HorarioSemanalController;
+use App\ControlAsistencias\Controllers\HistorialAsistenciaController;
+use App\ControlAsistencias\Controllers\RegistroAsistenciaController;
 
 // Login/logout
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -22,15 +28,7 @@ Route::get('/dashboard', function () {
     $role = strtolower((string) optional($user->rol)->nombre);
 
     if ($role === 'administrador') {
-        $activos = function ($q) { $q->where('estado', true)->orWhereNull('estado'); };
-        $usuariosCount = App\AutenticacionYSeguridad\Models\Usuario::where($activos)->count();
-        $docentesCount = App\AutenticacionYSeguridad\Models\Usuario::whereHas('rol', function ($q) {
-            $q->where('nombre', 'Docente');
-        })->where($activos)->count();
-        $administrativosCount = App\AutenticacionYSeguridad\Models\Usuario::whereHas('rol', function ($q) {
-            $q->whereIn('nombre', ['Administrador', 'Coordinador', 'Autoridad']);
-        })->where($activos)->count();
-        return view('dashboard_admin', compact('user','usuariosCount','docentesCount','administrativosCount'));
+        return app(PanelAdminController::class)->dashboard();
     }
 
     if ($role === 'autoridad') {
@@ -53,6 +51,8 @@ Route::post('/reset-password', [PasswordResetController::class, 'reset'])->middl
 
 // Administracion (solo Administrador)
 Route::middleware(['auth', 'role:Administrador'])->prefix('admin')->group(function () {
+    // Panel administrativo general (CU20)
+    Route::get('/panel', [PanelAdminController::class, 'dashboard'])->name('admin.panel');
     // Usuarios
     Route::get('/usuarios', [UsuarioAdminController::class, 'index'])->name('admin.usuarios.index');
     Route::post('/usuarios', [UsuarioAdminController::class, 'store'])->name('admin.usuarios.store');
@@ -86,4 +86,69 @@ Route::get('/autoridad/bitacora', [BitacoraController::class, 'index'])
     ->middleware(['auth','role:Autoridad,Administrador'])
     ->name('autoridad.bitacora.index');
 
+// Alias para compatibilidad: /decano/bitacora -> /autoridad/bitacora
+Route::get('/decano/bitacora', function () {
+    return redirect('/autoridad/bitacora');
+})->middleware(['auth','role:Autoridad,Administrador']);
 
+// Reportes estadísticos globales (CU22)
+Route::get('/reportes/globales', [ReportesGlobalesController::class, 'vista'])
+    ->middleware(['auth','role:Autoridad,Administrador'])
+    ->name('reportes.globales.vista');
+Route::get('/reportes/globales/opciones', [ReportesGlobalesController::class, 'opciones'])
+    ->middleware(['auth','role:Autoridad,Administrador'])
+    ->name('reportes.globales.opciones');
+Route::get('/reportes/globales/data', [ReportesGlobalesController::class, 'data'])
+    ->middleware(['auth','role:Autoridad,Administrador'])
+    ->name('reportes.globales.data');
+
+// CU16: Reporte de horarios y asistencia (Administrador / Coordinador)
+Route::get('/reportes/horarios-asistencia', [ReporteHorariosAsistenciaController::class, 'vista'])
+    ->middleware(['auth','role:Administrador,Coordinador'])
+    ->name('reportes.horarios_asistencia.vista');
+Route::get('/reportes/horarios-asistencia/opciones', [ReporteHorariosAsistenciaController::class, 'opciones'])
+    ->middleware(['auth','role:Administrador,Coordinador'])
+    ->name('reportes.horarios_asistencia.opciones');
+Route::get('/reportes/horarios-asistencia/data', [ReporteHorariosAsistenciaController::class, 'data'])
+    ->middleware(['auth','role:Administrador,Coordinador'])
+    ->name('reportes.horarios_asistencia.data');
+
+
+// Docente: visualizar horario semanal (CU12)
+Route::get('/docente/horario-semanal', [HorarioSemanalController::class, 'vista'])
+    ->middleware(['auth','role:Docente'])
+    ->name('docente.horario.semanal');
+
+Route::get('/docente/mi-horario-semanal', [HorarioSemanalController::class, 'miHorario'])
+    ->middleware(['auth','role:Docente'])
+    ->name('docente.horario.semanal.data');
+
+// Historial de asistencia (CU14)
+Route::get('/docente/mi-historial-asistencia', [HistorialAsistenciaController::class, 'miHistorial'])
+    ->middleware(['auth','role:Docente,Coordinador,Administrador'])
+    ->name('docente.historial.asistencia.data');
+
+// Coordinador consulta por docente
+Route::get('/coordinador/historial-asistencia', [HistorialAsistenciaController::class, 'buscar'])
+    ->middleware(['auth','role:Coordinador,Administrador'])
+    ->name('coordinador.historial.asistencia.data');
+
+// CU13: Registrar asistencia docente
+Route::get('/docente/registrar-asistencia', [RegistroAsistenciaController::class, 'vistaDocente'])
+    ->middleware(['auth','role:Docente'])
+    ->name('docente.asistencia.vista');
+Route::get('/docente/horarios-hoy', [RegistroAsistenciaController::class, 'horariosHoy'])
+    ->middleware(['auth','role:Docente'])
+    ->name('docente.asistencia.hoy');
+Route::post('/docente/registrar-asistencia', [RegistroAsistenciaController::class, 'registrarDocente'])
+    ->middleware(['auth','role:Docente'])
+    ->name('docente.asistencia.registrar');
+Route::post('/admin/registrar-asistencia', [RegistroAsistenciaController::class, 'registrarAdmin'])
+    ->middleware(['auth','role:Administrador'])
+    ->name('admin.asistencia.registrar');
+Route::get('/admin/control-asistencia', [RegistroAsistenciaController::class, 'vistaAdmin'])
+    ->middleware(['auth','role:Administrador'])
+    ->name('admin.asistencia.vista');
+Route::get('/admin/horarios-hoy', [RegistroAsistenciaController::class, 'horariosHoyAdmin'])
+    ->middleware(['auth','role:Administrador'])
+    ->name('admin.asistencia.hoy');

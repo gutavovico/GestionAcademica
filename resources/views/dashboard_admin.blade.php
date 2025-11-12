@@ -70,8 +70,7 @@
             <div class="pl-4 py-2 space-y-1">
               <a href="/gestion-aulas/registrar" class="block hover:underline">Registrar aulas y capacidad</a>
               <a href="/gestion-aulas/registrar-aula-horario" class="block hover:underline">Registrar aulas a horarios</a>
-              <span class="block text-slate-400">Asignacion automatica de horarios (proximamente)</span>
-              <span class="block text-slate-400">Consultar aulas disponibles (proximamente)</span>
+              <a href="/gestion-aulas/consultar-disponibles" class="block hover:underline">Consultar aulas disponibles</a>
               <a href="/gestion-aulas/horarios" class="block hover:underline">Gestionar horario del docente</a>
             </div>
           </details>
@@ -82,7 +81,7 @@
               <span>></span>
             </summary>
             <div class="pl-4 py-2 space-y-1">
-              <span class="block text-slate-400">Control de asistencia del docente (proximamente)</span>
+              <a href="/admin/control-asistencia" class="block hover:underline">Control de asistencia del docente</a>
             </div>
           </details>
 
@@ -92,8 +91,8 @@
               <span>></span>
             </summary>
             <div class="pl-4 py-2 space-y-1">
-              <span class="block text-slate-400">Generar reportes de horarios y asistencia (proximamente)</span>
-              <span class="block text-slate-400">Exportar reportes a PDF o Excel (proximamente)</span>
+              <a href="/reportes/globales" class="block hover:underline">Reportes estadisticos globales</a>
+              <a href="/reportes/horarios-asistencia" class="block hover:underline">Reporte de horarios y asistencia</a>
             </div>
           </details>
 
@@ -103,7 +102,6 @@
               <span>></span>
             </summary>
             <div class="pl-4 py-2 space-y-1">
-              <span class="block text-slate-400">Panel administrativo general (proximamente)</span>
               <a href="/admin/bitacora" class="block hover:underline">Consultar bitacora</a>
             </div>
           </details>
@@ -156,4 +154,3 @@
   </main>
 </body>
 </html>
-

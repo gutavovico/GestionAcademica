@@ -38,6 +38,11 @@ Route::get('/gestion-aulas/registrar-aula-horario', function () {
     return view('gestion_aulas_horarios.registrar_aula_horario');
 });
 
+// CU15: Consultar aulas disponibles (Coordinador / Administrador)
+Route::get('/gestion-aulas/consultar-disponibles', function () {
+    return view('gestion_aulas_horarios.consultar_disponibles');
+})->middleware(['auth','role:Coordinador,Administrador']);
+
 // Vista de prueba simple para login/logout
 Route::get('/test', function () {
     return view('test');

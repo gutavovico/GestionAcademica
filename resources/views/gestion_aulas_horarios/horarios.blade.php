@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Gestionar Horarios del Docente</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="min-h-screen bg-[#eef5ff]">
   <header class="max-w-6xl mx-auto px-6 py-6 flex items-center justify-between">
@@ -107,7 +107,7 @@
     async function cargarAulas(select){ const res = await fetch('/api/asignacion/aulas', { headers:{'Accept':'application/json'} }); const data = await res.json(); select.innerHTML = ''; (data.aulas||[]).forEach(a=>{ const o=document.createElement('option'); o.value=a.id_aula; o.textContent=aulaLabel(a); select.appendChild(o); }); }
     async function cargarCargas(idUsuario){ const res = await fetch('/api/horarios/cargas?id_usuario='+idUsuario, { headers:{'Accept':'application/json'} }); const data = await res.json(); const sel = qs('#c_carga'); sel.innerHTML=''; (data.cargas||[]).forEach(c=>{ const o=document.createElement('option'); o.value=c.id_carga; o.textContent = `${c.sigla || ''} ${c.materia || ''} — Grupo ${c.grupo || ''} — ${c.gestion}`; sel.appendChild(o); }); }
 
-    async function listar(){ const idu = docenteSel.value; if(!idu){ tbody.innerHTML=''; contador.textContent=''; return; } const res = await fetch('/api/horarios?id_usuario='+idu, { headers:{'Accept':'application/json'} }); const data = await res.json(); const items = data.items||[]; contador.textContent = `${items.length} horarios`; if(items.length===0){ tbody.innerHTML = '<tr><td colspan="6" class="px-3 py-4 text-slate-500">Sin horarios</td></tr>'; return; } tbody.innerHTML = items.map(itemToRow).join(''); bindRowActions(); }
+async function listar(){ const idu = docenteSel.value; if(!idu){ tbody.innerHTML=''; contador.textContent=''; return; } const res = await fetch('/api/horarios?id_usuario='+idu+'&estado=Activo', { headers:{'Accept':'application/json'} }); const data = await res.json(); const items = data.items||[]; contador.textContent = `${items.length} horarios`; if(items.length===0){ tbody.innerHTML = '<tr><td colspan="6" class="px-3 py-4 text-slate-500">Sin horarios</td></tr>'; return; } tbody.innerHTML = items.map(itemToRow).join(''); bindRowActions(); }
 
     function itemToRow(h){ const dias = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo']; const diaSel = `<select class="dia px-2 py-1 rounded border">${dias.map(d=>`<option ${h.dia===d?'selected':''}>${d}</option>`).join('')}</select>`; const hi = (h.hora_ini||'').toString().slice(0,5); const hf = (h.hora_fin||'').toString().slice(0,5); const aula = h.nroaula ? `Aula ${h.nroaula}` : h.id_aula; const aulaInput = `<input class="aula px-2 py-1 rounded border" value="${aula}" disabled title="Cambiar aula desde modal de creación (simplificado)"/>`; const materia = h.materia_sigla ? `${h.materia_sigla} - ${h.materia_nombre}` : (h.id_materia||''); return `<tr data-id="${h.id_horario}"><td class="px-3 py-2">${diaSel}</td><td class="px-3 py-2"><input type="time" class="ini px-2 py-1 rounded border" value="${hi}"></td><td class="px-3 py-2"><input type="time" class="fin px-2 py-1 rounded border" value="${hf}"></td><td class="px-3 py-2">${aulaInput}</td><td class="px-3 py-2">${materia}</td><td class="px-3 py-2 space-x-2"><button class="guardar text-sky-700" title="Guardar">💾</button><button class="eliminar text-red-600" title="Marcar asignado (DELETE)">🗑️</button></td></tr>`; }
 
@@ -152,12 +152,12 @@ function bindRowActions(){
     await listar();
   }));
 
-  // Eliminar (marcar asignado)
+  // Eliminar (inactivar)
   qsa('#tbody .eliminar').forEach(btn => btn.addEventListener('click', async () => {
     const tr = btn.closest('tr'); const id = tr.dataset.id;
     const res = await fetch('/api/horarios/'+id, {method:'DELETE', headers:{'Accept':'application/json'}});
     const data = await res.json(); if(!res.ok){ showToast(data.error||'Error'); return; }
-    showToast('Marcado como asignado'); await listar();
+    showToast('Horario eliminado'); await listar();
   }));
 }
 

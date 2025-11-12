@@ -114,7 +114,7 @@ class HorarioService
     {
         $h = DB::table('horario')->where('id_horario', $id)->first();
         if (!$h) return ['error' => 'Horario no encontrado'];
-        DB::table('horario')->where('id_horario', $id)->update(['estado' => 'Activo']);
+        DB::table('horario')->where('id_horario', $id)->update(['estado' => 'Inactivo']);
         return $this->obtener($id);
     }
 
@@ -159,3 +159,4 @@ class HorarioService
         return ['cargas' => $rows];
     }
 }
+
