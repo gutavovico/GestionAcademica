@@ -1,20 +1,20 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="es">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Horario Semanal</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <style></style>
-</head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Horario Semanal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+  <style></style>
+  </head>
 <body class="min-h-screen bg-[#eef5ff]">
   <header class="max-w-6xl mx-auto px-6 py-6 flex items-center justify-between">
     <div>
       <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900">Horario semanal</h1>
       <p class="text-slate-600">{{ $user?->nombre ?? 'Docente' }}</p>
     </div>
-    <a href="/dashboard" class="inline-flex items-center gap-2 bg-white hover:bg-slate-50 border border-slate-200 rounded-lg px-4 py-2 text-slate-800 shadow-sm">← Volver al perfil</a>
+    <a href="/dashboard" class="inline-flex items-center gap-2 bg-white hover:bg-slate-50 border border-slate-200 rounded-lg px-4 py-2 text-slate-800 shadow-sm">&larr; Volver al perfil</a>
   </header>
 
   <main class="max-w-6xl mx-auto px-6 pb-16 space-y-6">
@@ -35,15 +35,41 @@
 
     function fmt(t){ return (t||'').toString().slice(0,5); }
 
-    function //">${asis}</span></div>`;
-          const right = document.createElement('div');
-          right.className='text-right';
-          right.innerHTML = `<div class="text-slate-800">${fmt(it.hora_ini)} - ${fmt(it.hora_fin)}</div>
-                             <div class="text-slate-600 text-sm">${it.aula || ''}${it.modulo ? ' - Mod. '+it.modulo : ''}</div>`;
-          row.appendChild(left); row.appendChild(right); body.appendChild(row);
-        });
-      }
-      wrap.appendChild(head); wrap.appendChild(body); return wrap;
+    function cardDia(d, items) {
+      const wrap = document.createElement('div');
+      wrap.className = 'rounded-xl border border-slate-200 overflow-hidden';
+
+      const head = document.createElement('div');
+      head.className = 'px-4 py-3 bg-slate-50 border-b border-slate-200 flex items-center justify-between';
+      head.innerHTML = `<div class="font-semibold text-slate-900">${d}</div>
+                        <div class="text-slate-600 text-sm">${items.length} clase(s)</div>`;
+
+      const body = document.createElement('div');
+      body.className = 'divide-y divide-slate-100';
+
+      items.forEach(it => {
+        const row = document.createElement('div');
+        row.className = 'p-4 flex items-center justify-between gap-3';
+
+        const left = document.createElement('div');
+        const materia = it.materia || it.sigla || '';
+        const detalle = [it.grupo ? ('Grupo ' + it.grupo) : '', it.carrera || ''].filter(Boolean).join(' • ');
+        left.innerHTML = `<div class="font-medium text-slate-900">${materia}</div>
+                          <div class="text-slate-600 text-sm">${detalle}</div>`;
+
+        const right = document.createElement('div');
+        right.className='text-right';
+        right.innerHTML = `<div class="text-slate-800">${fmt(it.hora_ini)} - ${fmt(it.hora_fin)}</div>
+                           <div class="text-slate-600 text-sm">${(it.aula || '')}${it.modulo ? ' - Mod. ' + it.modulo : ''}</div>`;
+
+        row.appendChild(left);
+        row.appendChild(right);
+        body.appendChild(row);
+      });
+
+      wrap.appendChild(head);
+      wrap.appendChild(body);
+      return wrap;
     }
 
     async function cargar(){
@@ -73,3 +99,4 @@
   </script>
 </body>
 </html>
+

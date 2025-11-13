@@ -86,6 +86,12 @@ Route::middleware(['auth', 'role:Administrador'])->prefix('admin')->group(functi
     Route::post('/importar', [ImportacionMasivaController::class, 'importar'])->name('admin.importar.cargar');
 });
 
+// Coordinador: Importación masiva (mismo caso de uso)
+Route::middleware(['auth', 'role:Coordinador,Administrador'])->prefix('coordinador')->group(function () {
+    Route::get('/importar', [ImportacionMasivaController::class, 'vista'])->name('coordinador.importar.vista');
+    Route::post('/importar', [ImportacionMasivaController::class, 'importar'])->name('coordinador.importar.cargar');
+});
+
 // Decano: consultar bitacora (lectura)
 Route::get('/autoridad/bitacora', [BitacoraController::class, 'index'])
     ->middleware(['auth','role:Autoridad,Administrador'])

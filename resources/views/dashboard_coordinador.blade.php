@@ -17,9 +17,8 @@
 
       <nav class="space-y-2" id="menu-coord">
         <button data-section="perfil" class="w-full text-left px-3 py-2 rounded-lg bg-cyan-500 text-white">Mi Perfil</button>
-        <button data-section="importar" class="w-full text-left px-3 py-2 rounded-lg hover:bg-slate-50">Importar Excel/CSV</button>
+        <a href="/coordinador/importar" class="block w-full text-left px-3 py-2 rounded-lg hover:bg-slate-50">Importar Excel/CSV</a>
         <button data-section="gestionar" class="w-full text-left px-3 py-2 rounded-lg hover:bg-slate-50">Gestionar horario de docente</button>
-        <button data-section="validar" class="w-full text-left px-3 py-2 rounded-lg hover:bg-slate-50">Validar y aprobar horarios</button>
         <button data-section="historial" class="w-full text-left px-3 py-2 rounded-lg hover:bg-slate-50">Historial de asistencia</button>
       </nav>
 
@@ -50,13 +49,7 @@
         </div>
       </section>
 
-      <!-- Importar Excel/CSV (placeholder) -->
-      <section id="sec-importar" class="hidden space-y-4">
-        <div class="bg-white rounded-2xl shadow p-6">
-          <h2 class="font-semibold text-slate-900 mb-3">Importar Excel/CSV</h2>
-          <p class="text-slate-600">Seccion en construccion.</p>
-        </div>
-      </section>
+      <!-- Importar Excel/CSV redirige a /coordinador/importar -->
 
       <!-- Gestionar horario de docente -->
       <section id="sec-gestionar" class="hidden space-y-4">
@@ -67,13 +60,7 @@
         </div>
       </section>
 
-      <!-- Validar y aprobar horarios (placeholder) -->
-      <section id="sec-validar" class="hidden space-y-4">
-        <div class="bg-white rounded-2xl shadow p-6">
-          <h2 class="font-semibold text-slate-900 mb-3">Validar y aprobar horarios</h2>
-          <p class="text-slate-600">Seccion en construccion.</p>
-        </div>
-      </section>
+      
 
       <!-- Historial de asistencia -->
       <section id="sec-historial" class="hidden space-y-4">
@@ -105,15 +92,13 @@
           </form>
           <div class="overflow-auto mt-4">
             <table class="min-w-full text-sm">
-              <thead>
+                            <thead>
                 <tr class="bg-slate-50 text-slate-700">
                   <th class="p-2 text-left">Docente</th>
                   <th class="p-2 text-left">Fecha</th>
                   <th class="p-2 text-left">Materia</th>
                   <th class="p-2 text-left">Grupo</th>
                   <th class="p-2 text-left">Tipo</th>
-                  <th class="p-2 text-left">Método</th>
-
                   <th class="p-2 text-left">Obs.</th>
                 </tr>
               </thead>
@@ -131,9 +116,7 @@
       const menu = document.getElementById('menu-coord')
       const sections = {
         perfil: document.getElementById('sec-perfil'),
-        importar: document.getElementById('sec-importar'),
         gestionar: document.getElementById('sec-gestionar'),
-        validar: document.getElementById('sec-validar'),
         historial: document.getElementById('sec-historial'),
       }
       async function cargarDocentes(){
@@ -146,7 +129,7 @@
           const data = await res.json()
           ;(data.docentes||[]).forEach(d => {
             const opt = document.createElement('option');
-            opt.value = d.id_usuario; opt.textContent = `${d.nombre}${d.materias? ' · '+d.materias : ''}`;
+            opt.value = d.id_usuario; opt.textContent = `${d.nombre}${d.materias ? " - " + d.materias : ""}`;
             sel.appendChild(opt)
           })
         }catch(_){ /* noop */ }
@@ -180,13 +163,11 @@
               <td class="p-2">${(it.sigla?it.sigla+' ':'') + (it.materia||'')}</td>
               <td class="p-2">${it.grupo||'-'}</td>
               <td class="p-2">${it.tipo||'-'}</td>
-              <td class="p-2">${it.metodo_registro||'-'}</td>
-
               <td class="p-2">${(it.observacion||'').slice(0,40)}</td>`
             tbody.appendChild(tr)
             rows++
           })
-          if(rows===0){ const tr=document.createElement('tr'); tr.innerHTML='<td class="p-2" colspan="8">Sin resultados</td>'; tbody.appendChild(tr) }
+          if(rows===0){ const tr=document.createElement('tr'); tr.innerHTML='<td class="p-2" colspan="6">Sin resultados</td>'; tbody.appendChild(tr) }
           msg.textContent = ''
         }catch(_){ msg.textContent = 'Error al cargar datos' }
       }
@@ -214,3 +195,4 @@
   </script>
 </body>
 </html>
+
