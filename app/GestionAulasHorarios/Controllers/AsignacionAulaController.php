@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\GestionAulasHorarios\Services\AsignacionAulaService;
 use App\Support\BitacoraLogger;
-use App\Support\BitacoraLogger;
 
 class AsignacionAulaController extends Controller
 {

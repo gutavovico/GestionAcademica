@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Administración | Roles</title>
-    @vite(['resources/css/app.css','resources/js/app.js'])
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 min-h-screen p-6">
   <div class="max-w-4xl mx-auto space-y-6">
